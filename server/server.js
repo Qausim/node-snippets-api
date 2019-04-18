@@ -31,11 +31,31 @@ app.get('/snippets', (request, response) => {
     Snippet.find()
         .then(snippets => {
             if (!snippets[0]) {
-                response.status(404).send();
+                return response.status(404).send();
             }
             response.status(200).send({snippets});
         })
         .catch(e => response.status(400).send());
+});
+
+// GET /snippets/:id
+app.get('/snippets/:id', (request, response) => {
+    let id = request.params.id;
+    // if id is invalid return 404
+    if (!ObjectID.isValid(id)) {
+        return response.status(404).send();
+    }
+    
+    // get snippet
+    Snippet.findById(id)
+        .then(snippet => {
+            // if no snippet, return 404
+            if (!snippet) {
+                return response.status(404).send();
+            }
+
+            response.status(200).send({snippet});
+        });
 });
 
 // DELETE /snippets/:id
