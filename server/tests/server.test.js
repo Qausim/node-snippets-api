@@ -7,11 +7,13 @@ const {ObjectID} = require('mongodb');
 
 let snippets = [
     {
+        _id: new ObjectID(),
         text: "console.log(input)",
         description: "prints to screen",
         language: "Javascript"
     },
     {
+        _id: new ObjectID(),
         text: "input('input something')",
         description: "Asks for user input",
         language: "Python"
@@ -63,6 +65,25 @@ describe('GET /snippets', () => {
             .expect(res => {
                 expect(res.body.snippets.length).toBe(2);
             })
+            .end(done);
+    });
+
+    it('should return a specified snippet', done => {
+        let id = snippets[0]._id.toHexString();
+        request(app)
+            .get(`/snippets/${id}`)
+            .expect(200)
+            .expect(res => {
+                expect(res.body.snippet._id).toBe(id);
+            })
+            .end(done);
+    });
+
+    it('should return 404 on invalid object id', done => {
+        let id = 123;
+        request(app)
+            .get(`/snippets/${id}`)
+            .expect(404)
             .end(done);
     });
 });

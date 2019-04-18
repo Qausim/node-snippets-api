@@ -23,7 +23,7 @@ app.post('/snippets', (request, response) => {
 
     snippet.save()
         .then(snippet => response.status(200).send({snippet}))
-        .catch(e => response.status(400).send(e));
+        .catch(e => response.status(400).send());
 });
 
 // GET /snippets
@@ -55,7 +55,8 @@ app.get('/snippets/:id', (request, response) => {
             }
 
             response.status(200).send({snippet});
-        });
+        })
+        .catch(e => response.status(400).send());
 });
 
 // DELETE /snippets/:id
