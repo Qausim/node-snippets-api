@@ -76,7 +76,29 @@ app.delete('/snippets/:id', (request, response) => {
             response.status(200).send({snippet});
         })
         .catch(e => response.status(400).send());
-})
+});
+
+// PATCH /snippets/:id
+app.patch('/snippets/:id', (request, response) => {
+    let id = request.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        return response.status(404).send();
+    }
+    let body = request.body;
+    Snippet.findByIdAndUpdate(id, {
+        $set: body,
+    }, {
+        new: true
+    })
+        .then(snippet => {
+            if (!snippet) {
+                return response.status(404).send();
+            }
+            return response.status(200).send({snippet});
+        })
+        .catch(e => response.status(400).send());
+});
 
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));
