@@ -47,7 +47,7 @@ app.get('/snippets/:id', (request, response) => {
     }
     
     // get snippet
-    Snippet.findById(id)
+    Snippet.findOne({_id: id})
         .then(snippet => {
             // if no snippet, return 404
             if (!snippet) {
@@ -67,7 +67,7 @@ app.delete('/snippets/:id', (request, response) => {
         return response.status(404).send();
     }
     // Get the snippet
-    Snippet.findByIdAndDelete(id)
+    Snippet.findOneAndDelete({_id: id})
         .then(snippet => {
             // if no snippet was deleted shoot error
             if (!snippet) {
@@ -86,7 +86,7 @@ app.patch('/snippets/:id', (request, response) => {
         return response.status(404).send();
     }
     let body = request.body;
-    Snippet.findByIdAndUpdate(id, {
+    Snippet.findOneAndUpdate({_id: id}, {
         $set: body,
     }, {
         new: true
