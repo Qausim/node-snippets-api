@@ -87,3 +87,69 @@ describe('GET /snippets', () => {
             .end(done);
     });
 });
+
+describe('DELETE /snippets/:id', () => {
+    it('should delete a snippet entry', done => {
+        let id = snippets[0]._id.toHexString();
+        request(app)
+            .delete(`/snippets/${id}`)
+            .expect(200)
+            .expect(res => {
+                expect(res.body.snippet.text).toBe(snippets[0].text);
+            })
+            .end(done);
+    });
+
+    it('should fail on invalid id', done => {
+        request(app)
+            .delete('/snippets/123')
+            .expect(404)
+            .end(done);
+    });
+
+    it('should fail on non-matching object id', done => {
+        let id = new ObjectID();
+        request(app)
+            .delete(`/snippets/${id}`)
+            .expect(404)
+            .end(done);
+    });
+});
+
+describe('PATCH /snippets/:id', () => {
+    let  newSnippet = {
+        text: 'This is a test',
+        language: 'any',
+        description: 'not many stuffs it can do'
+    };
+
+    it('should update a snippet entry with new data', done => {
+        let id = snippets[0]._id.toHexString();
+        request(app)
+            .patch(`/snippets/${id}`)
+            .send(newSnippet)
+            .expect(200)
+            .expect(res => {
+                expect(res.body.snippet.text).toBe(newSnippet.text);
+            })
+            .end(done);
+    });
+
+    it('should fail on non-object id requests', done => {
+        request(app)
+            .patch('/snippets/123')
+            .send(newSnippet)
+            .expect(404)
+            .end(done);
+    });
+
+    it('should fail on non-matching object id', done => {
+        let id = new ObjectID();
+
+        request(app)
+            .patch(`/snippets/${id}`)
+            .send(newSnippet)
+            .expect(404)
+            .end(done);
+    });
+});
